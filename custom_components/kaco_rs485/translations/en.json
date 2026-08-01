@@ -1,0 +1,42 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Select the RS485 port",
+        "description": "Choose the serial port the inverters are wired to. ESPHome serial proxies appear here alongside local devices.",
+        "data": { "port": "Serial port" }
+      },
+      "confirm": {
+        "title": "Inverters found",
+        "description": "Found at address(es): {found}\n\n{unsupported}",
+        "data": { "addresses": "Addresses to monitor" }
+      }
+    },
+    "error": {
+      "cannot_connect": "Could not open that port."
+    },
+    "abort": {
+      "already_configured": "That port is already configured.",
+      "no_inverters": "No KACO inverters answered on that port. {detail}"
+    }
+  },
+  "entity": {
+    "sensor": {
+      "ac_power": { "name": "AC power" },
+      "ac_voltage": { "name": "AC voltage" },
+      "ac_current": { "name": "AC current" },
+      "dc_power": { "name": "DC power" },
+      "dc_voltage": { "name": "DC voltage" },
+      "dc_current": { "name": "DC current" },
+      "efficiency": { "name": "Efficiency" },
+      "temperature": { "name": "Temperature" },
+      "daily_yield": { "name": "Daily yield" },
+      "total_yield": { "name": "Total yield" },
+      "daily_peak_power": { "name": "Daily peak power" },
+      "total_uptime": { "name": "Total operating hours" },
+      "daily_uptime": { "name": "Daily operating hours" },
+      "status": { "name": "Status" },
+      "status_code": { "name": "Status code" }
+    }
+  }
+}

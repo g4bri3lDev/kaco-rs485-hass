@@ -16,6 +16,7 @@ cannot be misremembered.
 
 from __future__ import annotations
 
+import asyncio
 from typing import Any
 
 import voluptuous as vol
@@ -43,29 +44,61 @@ class KacoRs485ConfigFlow(ConfigFlow, domain=DOMAIN):
     def __init__(self) -> None:
         self._port: str | None = None
         self._result: ScanResult | None = None
+        self._scan_task: asyncio.Task[ScanResult] | None = None
+        self._scan_error: str | None = None
 
     async def async_step_user(
         self, user_input: dict[str, Any] | None = None
     ) -> ConfigFlowResult:
         errors: dict[str, str] = {}
+        if self._scan_error:
+            errors["base"] = self._scan_error
+            self._scan_error = None
 
         if user_input is not None:
             self._port = user_input[CONF_PORT]
             await self.async_set_unique_id(self._port)
             self._abort_if_unique_id_configured()
-
-            try:
-                self._result = await self._scan(self._port)
-            except BusError:
-                errors["base"] = "cannot_connect"
-            else:
-                return await self.async_step_confirm()
+            return await self.async_step_scan()
 
         return self.async_show_form(
             step_id="user",
             data_schema=vol.Schema({vol.Required(CONF_PORT): SerialPortSelector()}),
             errors=errors,
         )
+
+    async def async_step_scan(
+        self, user_input: dict[str, Any] | None = None
+    ) -> ConfigFlowResult:
+        """Run the bus scan as a background task, showing progress.
+
+        This cannot be done inline. Probing 32 addresses costs a reply timeout
+        for every one that is empty, so a sparse bus takes tens of seconds and
+        a slow one considerably longer. A config-flow step that blocks for that
+        long just renders as a spinner that never resolves.
+        """
+        assert self._port is not None
+
+        if self._scan_task is None:
+            self._scan_task = self.hass.async_create_task(self._scan(self._port))
+
+        if not self._scan_task.done():
+            return self.async_show_progress(
+                step_id="scan",
+                progress_action="scanning",
+                progress_task=self._scan_task,
+            )
+
+        try:
+            self._result = self._scan_task.result()
+        except BusError:
+            LOGGER.exception("Scanning %s failed", self._port)
+            self._scan_error = "cannot_connect"
+            return self.async_show_progress_done(next_step_id="user")
+        finally:
+            self._scan_task = None
+
+        return self.async_show_progress_done(next_step_id="confirm")
 
     async def async_step_confirm(
         self, user_input: dict[str, Any] | None = None

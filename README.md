@@ -14,6 +14,15 @@ different domains and coexist happily.
 Home Assistant **2026.5** or newer, for the serial-port selector and the
 ESPHome serial proxy support.
 
+The protocol library is declared in `manifest.json` and installed by Home
+Assistant itself. During development it points at a local checkout:
+
+```json
+"requirements": ["kaco-rs485 @ file:///path/to/kaco-rs485"]
+```
+
+Point that at your own checkout, or at a published version once there is one.
+
 ## Setup
 
 1. Wire an RS485 adapter to the inverter bus. If you are using an ESPHome

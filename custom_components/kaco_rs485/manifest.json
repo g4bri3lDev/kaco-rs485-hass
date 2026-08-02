@@ -9,6 +9,6 @@
   "iot_class": "local_polling",
   "issue_tracker": "https://github.com/g4bri3lDev/kaco-rs485-hass/issues",
   "loggers": ["kaco_rs485"],
-  "requirements": ["kaco-rs485==0.1.0"],
+  "requirements": ["kaco-rs485 @ file:///Users/gabriel/Developer/kaco-rs485"],
   "version": "0.1.0"
 }

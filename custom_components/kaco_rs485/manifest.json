@@ -1,14 +1,22 @@
 {
   "domain": "kaco_rs485",
   "name": "KACO RS485",
-  "codeowners": ["@g4bri3lDev"],
+  "codeowners": [
+    "@g4bri3lDev"
+  ],
   "config_flow": true,
-  "dependencies": ["usb"],
+  "dependencies": [
+    "usb"
+  ],
   "documentation": "https://github.com/g4bri3lDev/kaco-rs485-hass",
   "integration_type": "hub",
   "iot_class": "local_polling",
   "issue_tracker": "https://github.com/g4bri3lDev/kaco-rs485-hass/issues",
-  "loggers": ["kaco_rs485"],
-  "requirements": ["kaco-rs485 @ file:///Users/gabriel/Developer/kaco-rs485"],
+  "loggers": [
+    "kaco_rs485"
+  ],
+  "requirements": [
+    "kaco-rs485 @ file:///Users/gabriel/Developer/kaco/kaco-rs485"
+  ],
   "version": "0.1.0"
 }

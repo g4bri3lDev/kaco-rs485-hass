@@ -27,11 +27,25 @@ requirement at it:
 
 ## Setup
 
-1. Wire an RS485 adapter to the inverter bus. If you are using an ESPHome
-   proxy, flash it with the
-   [official serial-proxy config](https://github.com/esphome/serial-proxies)
-   and adopt the device in Home Assistant first — this integration reaches the
-   port *through* the ESPHome integration's connection.
+1. Get an RS485 port onto the network, or plug an adapter into the machine
+   running Home Assistant.
+
+   The least work is the ready-made ESPHome project for the **M5Stack AtomS3
+   Lite with an ATOMIC RS485 Base**: it installs
+   [from the browser](https://esphome.io/projects/?type=serial), no YAML and no
+   toolchain. For other hardware, the
+   [serial-proxies repository](https://github.com/esphome/serial-proxies) has
+   tested configurations, and the
+   [`serial_proxy` component](https://esphome.io/components/serial_proxy/)
+   documents the rest.
+
+   Adopt the device in Home Assistant **before** adding this integration: the
+   port is reached *through* the ESPHome integration's connection, so it has to
+   exist first.
+
+   A proxy is also the only way to reach a bus that is not physically next to
+   Home Assistant, and it keeps the link encrypted and authenticated rather
+   than exposing a raw socket.
 2. Add the integration and pick the port. Local devices and ESPHome proxies
    appear in the same list.
 3. It scans all 32 addresses and shows what answered. Confirm which to monitor.

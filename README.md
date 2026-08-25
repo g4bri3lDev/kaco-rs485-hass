@@ -14,14 +14,16 @@ different domains and coexist happily.
 Home Assistant **2026.5** or newer, for the serial-port selector and the
 ESPHome serial proxy support.
 
-The protocol library is declared in `manifest.json` and installed by Home
-Assistant itself. During development it points at a local checkout:
+The protocol library, [`kaco-serial`](https://pypi.org/project/kaco-serial/),
+is declared in `manifest.json` and installed by Home Assistant itself — there
+is nothing to install by hand.
+
+To develop against a local checkout of the library instead, point the
+requirement at it:
 
 ```json
-"requirements": ["kaco-rs485 @ file:///path/to/kaco-rs485"]
+"requirements": ["kaco-serial @ file:///path/to/kaco-rs485"]
 ```
-
-Point that at your own checkout, or at a published version once there is one.
 
 ## Setup
 

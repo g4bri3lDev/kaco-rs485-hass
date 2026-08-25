@@ -16,7 +16,7 @@
     "kaco_rs485"
   ],
   "requirements": [
-    "kaco-rs485 @ file:///Users/gabriel/Developer/kaco/kaco-rs485"
+    "kaco-serial==0.1.0"
   ],
   "version": "0.1.0"
 }

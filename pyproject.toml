@@ -1,5 +1,18 @@
-# Tooling config only. Home Assistant is not installed here — the integration
-# is tested by symlinking custom_components/kaco_rs485 into an HA dev instance.
+# Tooling config only. The integration itself is not a package: Home Assistant
+# loads custom_components/kaco_rs485 from disk, and it is developed by
+# symlinking that directory into an HA dev instance.
+[project]
+name = "kaco-rs485-integration-dev"
+version = "0.0.0"
+requires-python = ">=3.13"
+dependencies = []
+
+[tool.uv]
+package = false
+
+[dependency-groups]
+dev = ["ruff>=0.8"]
+
 [tool.ruff]
 line-length = 100
 target-version = "py313"

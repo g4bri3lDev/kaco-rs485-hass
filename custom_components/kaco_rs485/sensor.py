@@ -224,9 +224,7 @@ class KacoRs485Sensor(KacoRs485Entity, SensorEntity):
     ) -> None:
         super().__init__(coordinator, address)
         self.entity_description = description
-        self._attr_unique_id = (
-            f"{coordinator.config_entry.entry_id}_{address}_{description.key}"
-        )
+        self._attr_unique_id = f"{coordinator.config_entry.entry_id}_{address}_{description.key}"
 
     @property
     def native_value(self) -> float | str | None:

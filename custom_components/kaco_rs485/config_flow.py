@@ -47,9 +47,7 @@ class KacoRs485ConfigFlow(ConfigFlow, domain=DOMAIN):
         self._scan_task: asyncio.Task[ScanResult] | None = None
         self._scan_error: str | None = None
 
-    async def async_step_user(
-        self, user_input: dict[str, Any] | None = None
-    ) -> ConfigFlowResult:
+    async def async_step_user(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
         errors: dict[str, str] = {}
         if self._scan_error:
             errors["base"] = self._scan_error
@@ -67,9 +65,7 @@ class KacoRs485ConfigFlow(ConfigFlow, domain=DOMAIN):
             errors=errors,
         )
 
-    async def async_step_scan(
-        self, user_input: dict[str, Any] | None = None
-    ) -> ConfigFlowResult:
+    async def async_step_scan(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
         """Run the bus scan as a background task, showing progress.
 
         This cannot be done inline. Probing 32 addresses costs a reply timeout
@@ -136,8 +132,7 @@ class KacoRs485ConfigFlow(ConfigFlow, domain=DOMAIN):
             )
 
         described = ", ".join(
-            f"{d.address} ({d.inverter_type or 'unknown type'})"
-            for d in self._result.supported
+            f"{d.address} ({d.inverter_type or 'unknown type'})" for d in self._result.supported
         )
         unsupported = ", ".join(str(d.address) for d in self._result.unsupported)
 
@@ -153,9 +148,7 @@ class KacoRs485ConfigFlow(ConfigFlow, domain=DOMAIN):
             step_id="confirm",
             data_schema=vol.Schema(
                 {
-                    vol.Required(
-                        CONF_ADDRESSES, default=[str(a) for a in found]
-                    ): SelectSelector(
+                    vol.Required(CONF_ADDRESSES, default=[str(a) for a in found]): SelectSelector(
                         SelectSelectorConfig(
                             options=options,
                             multiple=True,
@@ -184,4 +177,3 @@ class KacoRs485ConfigFlow(ConfigFlow, domain=DOMAIN):
         LOGGER.debug("Scanning %s for KACO inverters", port)
         async with AsyncBus(port) as bus:
             return await scan(bus, ALL_ADDRESSES)
-

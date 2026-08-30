@@ -10,7 +10,7 @@ from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 from kaco_rs485 import InverterState
 
-from .const import DOMAIN, MANUFACTURER
+from .const import CONF_INVERTERS, DOMAIN, MANUFACTURER, SERIES_PREFIX
 from .coordinator import KacoRs485Coordinator
 
 
@@ -23,18 +23,31 @@ class KacoRs485Entity(CoordinatorEntity[KacoRs485Coordinator]):
         super().__init__(coordinator)
         self._address = address
 
-        entry_id = coordinator.config_entry.entry_id
+        entry = coordinator.config_entry
+        # From the entry, not the current poll: these inverters stop answering
+        # once the sun is down, and a device restarted at night must not lose
+        # its name and model until morning.
+        inverter_type = entry.data.get(CONF_INVERTERS, {}).get(str(address))
+
         self._attr_device_info = DeviceInfo(
-            identifiers={(DOMAIN, f"{entry_id}_{address}")},
-            name=f"Inverter {address}",
+            identifiers={(DOMAIN, f"{entry.entry_id}_{address}")},
+            name=self._device_name(address, inverter_type),
             manufacturer=MANUFACTURER,
-            model=self._model(),
+            model=inverter_type,
         )
 
-    def _model(self) -> str | None:
-        """The type string the inverter reports, e.g. "6400xi"."""
-        state = self.inverter
-        return state.measured.inverter_type if state and state.measured else None
+    @staticmethod
+    def _device_name(address: int, inverter_type: str | None) -> str:
+        """e.g. `"KACO Powador 6400xi (1)"`.
+
+        The address is always appended, never only when two units collide: it
+        is the only unique identifier these inverters expose, since command `s`
+        returns zero bytes on xi hardware, and it is set on the front panel so
+        the name maps to something you can walk up to and read.
+        """
+        if not inverter_type:
+            return f"Inverter {address}"
+        return f"{SERIES_PREFIX} {inverter_type} ({address})"
 
     @property
     def inverter(self) -> InverterState | None:

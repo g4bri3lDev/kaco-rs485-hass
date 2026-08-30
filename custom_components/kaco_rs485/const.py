@@ -10,6 +10,15 @@ LOGGER: Final = logging.getLogger(__package__)
 
 CONF_ADDRESSES: Final = "addresses"
 
+# `{"1": "6400xi", ...}` — what each address reported during the setup scan,
+# keyed by address as a string because entry data is JSON.
+#
+# Stored rather than read from the current poll because these inverters stop
+# answering entirely once the sun is down, so a restart at night would build
+# every device with no type at all. The scan knows the type of every address it
+# offers, and the flow refuses to create an entry when nothing answered.
+CONF_INVERTERS: Final = "inverters"
+
 # The KACO standard protocol allows RS485 addresses 1-32. Which ones are in
 # use is discovered by scanning; it is never assumed.
 MIN_ADDRESS: Final = 1
@@ -20,3 +29,8 @@ MAX_ADDRESS: Final = 32
 SCAN_INTERVAL_SECONDS: Final = 30
 
 MANUFACTURER: Final = "KACO new energy"
+
+# Inverters report a bare type string ("6400xi"); the series name is not on the
+# bus. Hardcoded because this integration is xi-only, and the xi range is all
+# Powador — blueplanet and TL/TR units are named as unsupported during setup.
+SERIES_PREFIX: Final = "KACO Powador"

@@ -20,6 +20,7 @@ import asyncio
 from typing import Any
 
 import voluptuous as vol
+from homeassistant.components import usb
 from homeassistant.config_entries import ConfigFlow, ConfigFlowResult
 from homeassistant.const import CONF_PORT
 from homeassistant.helpers.selector import (
@@ -123,7 +124,7 @@ class KacoRs485ConfigFlow(ConfigFlow, domain=DOMAIN):
 
         if user_input is not None:
             return self.async_create_entry(
-                title=self._port,
+                title=await self._title(self._port),
                 data={
                     CONF_PORT: self._port,
                     # The selector hands back strings; the library wants ints.
@@ -171,6 +172,25 @@ class KacoRs485ConfigFlow(ConfigFlow, domain=DOMAIN):
                 ),
             },
         )
+
+    async def _title(self, port: str) -> str:
+        """Name the entry after the port's description, not its URL.
+
+        The selector hands back an opaque string — for a proxy that is
+        `esphome-hass://esphome/<entry_id>?port_name=...`, which names another
+        integration's internal entry id. The `usb` integration already knows
+        the port as, say, "AtomS3 Lite RS485 (RS-485)".
+        """
+        try:
+            ports = await usb.async_scan_serial_ports(self.hass)
+        except OSError:
+            LOGGER.debug("Could not scan serial ports to name %s", port, exc_info=True)
+            return port
+
+        for candidate in ports:
+            if candidate.device == port:
+                return candidate.description or port
+        return port
 
     async def _scan(self, port: str) -> ScanResult:
         """Probe the whole bus. Slow, but it only happens once."""

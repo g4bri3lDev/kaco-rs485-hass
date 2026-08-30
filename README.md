@@ -50,16 +50,37 @@ requirement at it:
    appear in the same list.
 3. It scans all 32 addresses and shows what answered. Confirm which to monitor.
 
-**Do the setup scan in daylight.** These inverters stop answering entirely when
-the sun is down, so a night-time scan finds nothing and cannot tell you whether
-that is a wiring problem or just darkness.
+**Inverters can only be added while the sun is up.** These units shut down
+completely at dusk — not into a standby that still answers, but off the bus
+entirely — so a night-time scan finds nothing at all. Setup refuses to create
+an empty entry, because an empty scan cannot tell you whether the wiring is
+wrong or it is simply dark.
+
+Measured on a three-inverter bus (2026-08-30, sunset 19:58 local): the units
+dropped to 0 W around 19:15 and spent the next hour cycling between *Waiting*,
+*Constant voltage mode* and *MPP tracking* while still answering normally, then
+went silent between **20:13 and 20:19** — fifteen to twenty minutes after
+sunset. One reported *Waiting for shutdown* as its last status. They answer
+nothing at all until morning.
+
+This is also why each inverter's model is recorded during setup rather than
+read from the current poll: a Home Assistant restart at night would otherwise
+leave every device unnamed until sunrise.
 
 **Only one device may poll an RS485 bus.** If a datalogger is still connected,
 disconnect it — two masters corrupt each other's traffic.
 
 ## Entities
 
-One device per inverter. Enabled by default:
+One device per inverter, named for what it reported during setup — e.g.
+**KACO Powador 6400xi (1)**, where the number is the RS485 address set on that
+inverter's own front panel. The address is always part of the name: two
+identical units on one bus is the ordinary case, and xi inverters expose no
+serial number to tell them apart (the protocol's serial command is answered
+only by blueplanet hardware). Rename the devices in Home Assistant if you would
+rather they were "Garage roof".
+
+Enabled by default:
 
 | entity | notes |
 |---|---|

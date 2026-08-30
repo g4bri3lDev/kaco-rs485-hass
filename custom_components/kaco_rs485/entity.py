@@ -1,9 +1,6 @@
 """Shared entity base.
 
-One Home Assistant device per inverter, all of them children of the serial
-port they share. That mirrors the physical arrangement — several inverters on
-one RS485 bus — and means a port that goes away degrades one place rather than
-appearing as several unrelated failures.
+One Home Assistant device per inverter.
 """
 
 from __future__ import annotations
@@ -32,7 +29,6 @@ class KacoRs485Entity(CoordinatorEntity[KacoRs485Coordinator]):
             name=f"Inverter {address}",
             manufacturer=MANUFACTURER,
             model=self._model(),
-            via_device=(DOMAIN, entry_id),
         )
 
     def _model(self) -> str | None:

@@ -10,14 +10,18 @@ LOGGER: Final = logging.getLogger(__package__)
 
 CONF_ADDRESSES: Final = "addresses"
 
-# `{"1": "6400xi", ...}` — what each address reported during the setup scan,
-# keyed by address as a string because entry data is JSON.
+# `{"1": {"model": "6400xi", "sw_version": "K222.36DE 6817"}, ...}` — what each
+# address reported during the setup scan, keyed by address as a string because
+# entry data is JSON.
 #
 # Stored rather than read from the current poll because these inverters stop
 # answering entirely once the sun is down, so a restart at night would build
-# every device with no type at all. The scan knows the type of every address it
-# offers, and the flow refuses to create an entry when nothing answered.
+# every device with nothing on it. The scan captures both while the inverter is
+# demonstrably awake, and the flow refuses to create an entry when nothing
+# answered.
 CONF_INVERTERS: Final = "inverters"
+CONF_MODEL: Final = "model"
+CONF_SW_VERSION: Final = "sw_version"
 
 # The KACO standard protocol allows RS485 addresses 1-32. Which ones are in
 # use is discovered by scanning; it is never assumed.

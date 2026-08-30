@@ -34,7 +34,14 @@ from homeassistant.helpers.selector import (
 from kaco_rs485 import AsyncBus, BusError
 from kaco_rs485.discovery import ALL_ADDRESSES, ScanResult, scan
 
-from .const import CONF_ADDRESSES, CONF_INVERTERS, DOMAIN, LOGGER
+from .const import (
+    CONF_ADDRESSES,
+    CONF_INVERTERS,
+    CONF_MODEL,
+    CONF_SW_VERSION,
+    DOMAIN,
+    LOGGER,
+)
 
 
 class KacoRs485ConfigFlow(ConfigFlow, domain=DOMAIN):
@@ -125,13 +132,20 @@ class KacoRs485ConfigFlow(ConfigFlow, domain=DOMAIN):
         if user_input is not None:
             # The selector hands back strings; the library wants ints.
             chosen = [int(a) for a in user_input[CONF_ADDRESSES]]
-            types = {d.address: d.inverter_type for d in self._result.supported}
+            found = {d.address: d for d in self._result.supported}
             return self.async_create_entry(
                 title=await self._title(self._port),
                 data={
                     CONF_PORT: self._port,
                     CONF_ADDRESSES: chosen,
-                    CONF_INVERTERS: {str(a): types[a] for a in chosen if types.get(a)},
+                    CONF_INVERTERS: {
+                        str(a): {
+                            CONF_MODEL: found[a].inverter_type,
+                            CONF_SW_VERSION: found[a].firmware,
+                        }
+                        for a in chosen
+                        if a in found
+                    },
                 },
             )
 

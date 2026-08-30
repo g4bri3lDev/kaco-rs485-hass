@@ -10,7 +10,14 @@ from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 from kaco_rs485 import InverterState
 
-from .const import CONF_INVERTERS, DOMAIN, MANUFACTURER, SERIES_PREFIX
+from .const import (
+    CONF_INVERTERS,
+    CONF_MODEL,
+    CONF_SW_VERSION,
+    DOMAIN,
+    MANUFACTURER,
+    SERIES_PREFIX,
+)
 from .coordinator import KacoRs485Coordinator
 
 
@@ -26,14 +33,17 @@ class KacoRs485Entity(CoordinatorEntity[KacoRs485Coordinator]):
         entry = coordinator.config_entry
         # From the entry, not the current poll: these inverters stop answering
         # once the sun is down, and a device restarted at night must not lose
-        # its name and model until morning.
-        inverter_type = entry.data.get(CONF_INVERTERS, {}).get(str(address))
+        # what it is until morning.
+        recorded = entry.data.get(CONF_INVERTERS, {}).get(str(address), {})
+        model = recorded.get(CONF_MODEL)
 
         self._attr_device_info = DeviceInfo(
             identifiers={(DOMAIN, f"{entry.entry_id}_{address}")},
-            name=self._device_name(address, inverter_type),
+            name=self._device_name(address, model),
             manufacturer=MANUFACTURER,
-            model=inverter_type,
+            model=model,
+            # No serial_number: xi units answer command `s` with zero bytes.
+            sw_version=recorded.get(CONF_SW_VERSION) or None,
         )
 
     @staticmethod

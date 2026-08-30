@@ -63,9 +63,9 @@ went silent between **20:13 and 20:19** — fifteen to twenty minutes after
 sunset. One reported *Waiting for shutdown* as its last status. They answer
 nothing at all until morning.
 
-This is also why each inverter's model is recorded during setup rather than
-read from the current poll: a Home Assistant restart at night would otherwise
-leave every device unnamed until sunrise.
+This is also why each inverter's model and firmware version are recorded during
+setup rather than read from the current poll: a Home Assistant restart at night
+would otherwise leave every device unnamed until sunrise.
 
 **Only one device may poll an RS485 bus.** If a datalogger is still connected,
 disconnect it — two masters corrupt each other's traffic.

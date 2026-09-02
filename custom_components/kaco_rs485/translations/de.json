@@ -1,0 +1,79 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "RS485-Port auswählen",
+        "description": "Wähle den seriellen Port, an dem die Wechselrichter angeschlossen sind. ESPHome-Serial-Proxys erscheinen hier neben lokalen Geräten.",
+        "data": {
+          "port": "Serieller Port"
+        }
+      },
+      "confirm": {
+        "title": "Wechselrichter gefunden",
+        "description": "Gefunden an Adresse(n): {found}\n\n{unsupported}",
+        "data": {
+          "addresses": "Zu überwachende Adressen"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Der Port konnte nicht geöffnet werden."
+    },
+    "abort": {
+      "already_configured": "Dieser Port ist bereits konfiguriert.",
+      "no_inverters": "Auf diesem Port haben keine KACO-Wechselrichter geantwortet. {detail}"
+    },
+    "progress": {
+      "scanning": "Jede Adresse auf dem Bus wird abgefragt, 1 bis 32. Adressen ohne angeschlossenes Gerät kosten jeweils einen Antwort-Timeout, das kann also eine Minute dauern."
+    }
+  },
+  "entity": {
+    "sensor": {
+      "ac_power": {
+        "name": "AC-Leistung"
+      },
+      "ac_voltage": {
+        "name": "AC-Spannung"
+      },
+      "ac_current": {
+        "name": "AC-Strom"
+      },
+      "dc_power": {
+        "name": "DC-Leistung"
+      },
+      "dc_voltage": {
+        "name": "DC-Spannung"
+      },
+      "dc_current": {
+        "name": "DC-Strom"
+      },
+      "efficiency": {
+        "name": "Wirkungsgrad"
+      },
+      "temperature": {
+        "name": "Temperatur"
+      },
+      "daily_yield": {
+        "name": "Tagesertrag"
+      },
+      "total_yield": {
+        "name": "Gesamtertrag"
+      },
+      "daily_peak_power": {
+        "name": "Tagesspitzenleistung"
+      },
+      "total_uptime": {
+        "name": "Betriebsstunden gesamt"
+      },
+      "daily_uptime": {
+        "name": "Betriebsstunden heute"
+      },
+      "status": {
+        "name": "Status"
+      },
+      "status_code": {
+        "name": "Statuscode"
+      }
+    }
+  }
+}

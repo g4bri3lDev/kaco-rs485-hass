@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.0](https://github.com/g4bri3lDev/kaco-rs485-hass/compare/v1.0.0...v1.1.0) (2026-09-02)
+
+
+### Features
+
+* translate the integration into German ([#6](https://github.com/g4bri3lDev/kaco-rs485-hass/issues/6)) ([b138151](https://github.com/g4bri3lDev/kaco-rs485-hass/commit/b1381510e22df9351d3e8621a3d1558cee25f4a6))
+
 ## 1.0.0 (2026-08-30)
 
 

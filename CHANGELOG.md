@@ -1,5 +1,22 @@
 # Changelog
 
+## [1.2.0](https://github.com/g4bri3lDev/kaco-rs485-hass/compare/v1.1.0...v1.2.0) (2026-09-13)
+
+
+### Features
+
+* log once when an inverter stops answering ([b1c4fbb](https://github.com/g4bri3lDev/kaco-rs485-hass/commit/b1c4fbb95d801ffe5519d451ddf81eb1b79567c5))
+
+
+### Bug fixes
+
+* release the port when setup fails ([5ac083d](https://github.com/g4bri3lDev/kaco-rs485-hass/commit/5ac083d4e152178643d3881ffd89a11ec386c383))
+
+
+### Documentation
+
+* recommend daily yield for the energy dashboard ([3c780e6](https://github.com/g4bri3lDev/kaco-rs485-hass/commit/3c780e6210352fc4d3b0a30623590fc490197630))
+
 ## [1.1.0](https://github.com/g4bri3lDev/kaco-rs485-hass/compare/v1.0.0...v1.1.0) (2026-09-02)
 
 

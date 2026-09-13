@@ -13,7 +13,7 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
-from kaco_rs485 import AsyncBus, BusError, InverterState, KacoRs485Client
+from kaco_rs485 import AsyncBus, BusError, InverterState, KacoRs485Client, status_text
 
 from .const import DOMAIN, LOGGER, SCAN_INTERVAL_SECONDS
 
@@ -42,6 +42,7 @@ class KacoRs485Coordinator(DataUpdateCoordinator[dict[int, InverterState]]):
         self._bus = AsyncBus(port)
         self._client = KacoRs485Client(self._bus, addresses)
         self._opened = False
+        self._reported_dark: dict[int, bool] = {}
 
     async def async_open(self) -> None:
         await self._bus.open()
@@ -63,8 +64,34 @@ class KacoRs485Coordinator(DataUpdateCoordinator[dict[int, InverterState]]):
                 raise UpdateFailed(f"Cannot open the RS485 port: {err}") from err
 
         try:
-            return await self._client.poll_cycle()
+            states = await self._client.poll_cycle()
         except BusError as err:
             # Drop the connection so the next cycle reopens it.
             await self.async_close()
             raise UpdateFailed(f"RS485 bus error: {err}") from err
+
+        self._log_availability(states)
+        return states
+
+    def _log_availability(self, states: dict[int, InverterState]) -> None:
+        """Log once per inverter going dark and once on its return.
+
+        The coordinator already logs the bus itself going away; this is the
+        case where the poll succeeded but one inverter stopped answering.
+        """
+        for address, state in states.items():
+            dark = not state.available
+            if dark == self._reported_dark.get(address, False):
+                continue
+            self._reported_dark[address] = dark
+
+            if not dark:
+                LOGGER.info("Inverter %d is answering again", address)
+            elif state.measured is not None:
+                LOGGER.info(
+                    "Inverter %d stopped answering, last reported %s",
+                    address,
+                    status_text(state.measured.status),
+                )
+            else:
+                LOGGER.info("Inverter %d stopped answering", address)

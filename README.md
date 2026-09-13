@@ -86,8 +86,8 @@ Enabled by default:
 |---|---|
 | AC power, DC power | instantaneous |
 | Temperature | inverter internal |
-| Daily yield | Wh, resets daily |
-| Total yield | kWh, feeds the energy dashboard |
+| Daily yield | Wh, resets daily — feeds the energy dashboard |
+| Total yield | kWh lifetime counter; 1 kWh resolution, so too coarse for the energy dashboard |
 | Daily peak power | highest AC power today |
 | Total operating hours | diagnostic |
 | Status | text, with an `is_fault` attribute |
@@ -109,9 +109,38 @@ worse than one that admits it does not know.
 
 ## Energy dashboard
 
-Add each inverter's **Total yield** as a solar production source. It is a
-`total_increasing` kWh counter read from the inverter's own lifetime register,
-so it survives Home Assistant restarts and does not need a Riemann sum.
+Add each inverter's **Daily yield** as a solar production source. Both yield
+sensors are `total_increasing` energy counters read from the inverter itself, so
+either works without a Riemann sum — but they differ by three orders of
+magnitude in resolution, and only one of them is usable.
+
+**Daily yield** is reported in **Wh**. **Total yield** is reported in **kWh** on
+xi units, and the protocol carries no decimals, so the lifetime counter only
+moves in whole kilowatt-hours. On a 6400xi that is roughly one step per hour of
+good sun — which means the energy dashboard's hourly bars are quantised to 1 kWh,
+and the morning ramp disappears entirely.
+
+Measured on a 6400xi (2026-09-10), hourly deltas from the same statistics table
+the energy dashboard renders:
+
+| hour | Total yield | Daily yield |
+|---|---|---|
+| 07:00 | 0 kWh | 24 Wh |
+| 08:00 | 0 kWh | 357 Wh |
+| 09:00 | 1 kWh | 1000 Wh |
+| 10:00 | 2 kWh | 1784 Wh |
+| 11:00 | 2 kWh | 1849 Wh |
+| 12:00 | 1 kWh | 1103 Wh |
+
+The inverter had produced 381 Wh by 08:00 and Total yield still read zero for
+those hours. Across the whole day it recorded 7 distinct values; Daily yield
+recorded 514.
+
+The one thing Total yield does better: it survives Home Assistant being down.
+A daily counter loses any day Home Assistant missed, where the lifetime counter
+catches it as a jump on return. If that matters more to you than intraday
+resolution, use Total yield — but for everyday dashboards, Daily yield is the
+right source.
 
 ## Limitations
 

@@ -4,9 +4,6 @@ from __future__ import annotations
 
 from homeassistant.const import CONF_PORT, Platform
 from homeassistant.core import HomeAssistant
-from homeassistant.exceptions import ConfigEntryNotReady
-
-from kaco_rs485 import BusError
 
 from .const import CONF_ADDRESSES
 from .coordinator import KacoRs485ConfigEntry, KacoRs485Coordinator
@@ -22,10 +19,9 @@ async def async_setup_entry(hass: HomeAssistant, entry: KacoRs485ConfigEntry) ->
         addresses=entry.data[CONF_ADDRESSES],
     )
 
-    try:
-        await coordinator.async_open()
-    except BusError as err:
-        raise ConfigEntryNotReady(f"Cannot open {entry.data[CONF_PORT]}: {err}") from err
+    # Registered before the first refresh so a failed setup still releases the
+    # port; a second master on an RS485 bus corrupts everyone's traffic.
+    entry.async_on_unload(coordinator.async_close)
 
     await coordinator.async_config_entry_first_refresh()
     entry.runtime_data = coordinator
@@ -35,7 +31,4 @@ async def async_setup_entry(hass: HomeAssistant, entry: KacoRs485ConfigEntry) ->
 
 
 async def async_unload_entry(hass: HomeAssistant, entry: KacoRs485ConfigEntry) -> bool:
-    unloaded = await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
-    if unloaded:
-        await entry.runtime_data.async_close()
-    return unloaded
+    return await hass.config_entries.async_unload_platforms(entry, PLATFORMS)

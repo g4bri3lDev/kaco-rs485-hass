@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.1](https://github.com/g4bri3lDev/kaco-rs485-hass/compare/v1.2.0...v1.2.1) (2026-10-31)
+
+
+### Bug fixes
+
+* bump kaco-serial to 1.0.3 ([dbc625e](https://github.com/g4bri3lDev/kaco-rs485-hass/commit/dbc625e915c1cc26c19665a0bc76cc54e3dc87bd))
+
 ## [1.2.0](https://github.com/g4bri3lDev/kaco-rs485-hass/compare/v1.1.0...v1.2.0) (2026-09-13)
 
 

@@ -1,5 +1,14 @@
 # KACO RS485 for Home Assistant
 
+> [!WARNING]
+> **This custom integration is retired.** KACO RS485 is part of Home Assistant
+> core since 2026.11 ([docs](https://www.home-assistant.io/integrations/kaco_rs485/)).
+> Remove this integration from HACS and restart Home Assistant. The core
+> integration uses the same `kaco_rs485` domain, and a custom integration with
+> that domain overrides the core one. If the integration fails to load
+> afterwards, delete it and add it again. This repository gets no further
+> updates.
+
 Reads KACO Powador **xi-series** inverters (6400xi, 8000xi and relatives) over
 RS485 — from a serial adapter on the Home Assistant host, or across the network
 through an [ESPHome serial proxy](https://esphome.io/components/serial_proxy/).
